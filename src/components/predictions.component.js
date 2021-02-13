@@ -178,13 +178,13 @@ function CreatePrediction() {
             <div className="col">
             <label>
                 <p>Prediction Results: </p>
-                <input type="text"
+                 <input type="text"
                     disabled
                     name="prediction"
                     className="form-control"
                     value={prediction.prediction}
                     onChange={onChangePrediction}
-                    />
+                  />
               </label>
             </div>
           </div>
