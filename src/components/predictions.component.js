@@ -1,109 +1,100 @@
-import React, { Component } from 'react';
-import { Link, Router } from 'react-router-dom';
+import React, {useState} from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/predictions.css';
 
-export default class CreatePrediction extends Component {
+function CreatePrediction() {
   
-  constructor(props) {
-    super(props);
-    this.state = {
-        age: '',
-        bmi: '',
-        children: '',
-        sex: '',
-        smoking: '',
-        region: '',
-        prediction: ''
-      }
+  const [age, setAge] = useState({
+    age: '',
+  });
+  const [bmi, setBmi] = useState(0);
+  const [children, setChildren] = useState(0);
+  const [sex, setSex] = useState('');
+  const [smoking, setSmoking] = useState('');
+  const [region, setRegion] = useState({
+    region : ''
+  });
+  const [prediction, setPrediction] = useState({
+    prediction : ''
+  });
 
-    this.onChangeAge = this.onChangeAge.bind(this);
-    this.onChangeBmi = this.onChangeBmi.bind(this);
-    this.onChangeChildren = this.onChangeChildren.bind(this);
-    this.onChangeSex = this.onChangeSex.bind(this);
-    this.onChangeSmoking = this.onChangeSmoking.bind(this);
-    this.onChangeRegion = this.onChangeRegion.bind(this);
-    this.onChangePrediction = this.onChangePrediction.bind(this);
-
-    this.onSubmit = this.onSubmit.bind(this);
-
-    this.state = {
-        age: '',
-        bmi: '',
-        children: '',
-        sex: '',
-        smoking: '',
-        region: '',
-        prediction: ''
-      }
-
-  }
-
-  componentDidMount() {
-
-  }
-
-  onChangeAge(e) {
-    this.setState({
-      age: e.target.value
-    });
-  }
-  onChangeBmi(e) {
-    this.setState({
-      bmi: e.target.value
-    });
-  }
-  onChangeChildren(e) {
-    this.setState({
-      children: e.target.value
-    });
-  }
-  onChangePrediction(e) {
-    this.setState({
-      prediction: e.target.value
+  const onChangeAge = (e) => {
+    setAge({
+      ...age, 
+      age : e.target.value
     });
   }
 
-  onChangeSex(e) {
-    this.setState({
-      sex: e.target.value
-    });
-  }
-  onChangeSmoking(e) {
-    this.setState({
-      smoking: e.target.value
-    });
-  }
-  onChangeRegion(e) {
-    this.setState({
-      region: e.target.value
+  const onChangeBmi = (e) => {
+    setBmi({
+      ...bmi, 
+      [e.target.name] : e.target.value
     });
   }
 
-  onSubmit(e) {
-    e.preventDefault();
-    const prediction = {
-      age: this.state.age,
-      bmi: this.state.bmi,
-      children: this.state.children,
-      sex: this.state.sex,
-      smoking: this.state.smoking,
-      region: this.state.region
+  const onChangeChildren = (e) => {
+    setChildren({
+      ...children, 
+      [e.target.name] : e.target.value
+    });
+  }
+
+  const onChangeSex = (e) => {
+    setSex({
+      ...sex, 
+      [e.target.name] : e.target.value
+    });
+  }
+
+  const onChangeSmoking = (e) => {
+    setSmoking({
+      ...smoking, 
+      [e.target.name] : e.target.value
+    });
+  }
+
+  const onChangeRegion = (e) => {
+    setRegion({
+      ...region, 
+      region : e.target.value
+    });
+  }
+
+  const onChangePrediction = (e) => {
+    setPrediction({
+      ...prediction, 
+      prediction : e.target.value
+    });
+  }
+  
+  const onSubmit = (e) => {
+    e.preventDefault()
+
+    const predictions = {
+      age: age.age,
+      bmi: bmi.bmi,
+      children: children.children, 
+      sex: sex.sex,
+      smoking: smoking.smoking,
+      region: region.region
     };
 
-    console.log(prediction);
-    axios.post('http://127.0.0.1:5000/pall', prediction)//TODO POST
+    console.log(predictions);
+    axios.post('http://127.0.0.1:5000/pall', predictions)
     .then(res => {
-      //console.log(res.data);
       const predictive = JSON.parse(res.data.result);
-      //console.log(predictive);
-      this.setState({prediction: predictive})
+      console.log(predictive);
+      setPrediction({
+        ...prediction, 
+        prediction : res.data.result
+      });
     });
   }
 
-  render() {
-    return (
-        <div className="container">
+  return(
+    <div className="container">
+      <h1>Logistic Regression Prediction Ensurance</h1>
           <div className="row">
             <div className="col">
               
@@ -114,23 +105,28 @@ export default class CreatePrediction extends Component {
           </div>
           <div className="row">
           <div className="col">
-              <form onSubmit={this.onSubmit}>
+              <form onSubmit={onSubmit}>
               <label>
                 <p>Age</p>
                 <input type="number"
                     required
                     name="age"
-                    maxLength="2"
                     className="form-control"
-                    value={this.state.age}
-                    onChange={this.onChangeAge}
+                    onChange={onChangeAge}
                     />
               </label>
               <label>
                 <p>Sex</p>
-                  <div onChange={this.onChangeSex}>
-                    <input type="radio" value="male" name="gender" /> Male
-                    <input type="radio" value="female" name="gender" /> Female
+                  <div onChange = {onChangeSex}>
+                    <div className="form-check form-check-inline">
+                      <input className="form-check-input" type="radio" name="sex" value="male"></input>
+                      <label className="form-check-label" >Male</label>
+                    </div>
+
+                    <div className="form-check form-check-inline">
+                      <input className="form-check-input" type="radio" name="sex" value="female"></input>
+                      <label className="form-check-label" >Female</label>
+                    </div>
                   </div>
               </label>
               <label>
@@ -139,8 +135,7 @@ export default class CreatePrediction extends Component {
                     required
                     name="bmi"
                     className="form-control"
-                    value={this.state.bmi}
-                    onChange={this.onChangeBmi}
+                    onChange={onChangeBmi}
                     />
               </label>
               <label>
@@ -149,27 +144,34 @@ export default class CreatePrediction extends Component {
                     required
                     name="children"
                     className="form-control"
-                    value={this.state.children}
-                    onChange={this.onChangeChildren}
+                    onChange={onChangeChildren}
                     />
               </label>
               <label>
                 <p>Smoking</p>
-                <div onChange={this.onChangeSmoking}>
-                  <input type="radio" value="yes" name="smoking" /> Yes
-                  <input type="radio" value="no" name="smoking" /> No
-                </div>
+                <div onChange = {onChangeSmoking}>
+                    <div className="form-check form-check-inline">
+                      <input className="form-check-input" type="radio" name="smoking" value="yes"></input>
+                      <label className="form-check-label" >Yes</label>
+                    </div>
+
+                    <div className="form-check form-check-inline">
+                      <input className="form-check-input" type="radio" name="smoking" value="no"></input>
+                      <label className="form-check-label" >No</label>
+                    </div>
+                  </div>
               </label>
               <label>
                 <p>Region</p>
-                  <select onChange={this.onChangeRegion}>
-                    <option defaultValue="northwest">Northwest</option>
-                    <option value="southeast">Southeast</option>
-                    <option value="southwest">Southwest</option>
+                  <select className="form-select" onChange = {onChangeRegion}>
+                    <option defaultValue="northwest" name="region">Northwest</option>
+                    <option value="northeast" name="region">Northeast</option>
+                    <option value="southeast" name="region">Southeast</option>
+                    <option value="southwest" name="region">Southwest</option>
                   </select>
               </label>
               <div>
-                <button type="submit">Predict</button>
+                <button type="submit" className="btn btn-primary">Predict</button>
               </div>
             </form>
             </div>
@@ -180,13 +182,14 @@ export default class CreatePrediction extends Component {
                     disabled
                     name="prediction"
                     className="form-control"
-                    value={this.state.prediction}
-                    onChange={this.onChangePrediction.bind(this)}
+                    value={prediction.prediction}
+                    onChange={onChangePrediction}
                     />
               </label>
             </div>
           </div>
         </div>
-    )
-  }
+  );
 }
+
+export default CreatePrediction;
