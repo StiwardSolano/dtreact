@@ -12,7 +12,7 @@ function ListPredictions() {
   ]);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:5000/predictions')
+    axios.get('https://mongopy-api.herokuapp.com/predictions')
     .then(response => {
      setPredictions(response.data);
     })
