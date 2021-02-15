@@ -81,7 +81,7 @@ function CreatePrediction() {
     };
 
     console.log(predictions);
-    axios.post('http://127.0.0.1:5000/pall', predictions)
+    axios.post('https://mongopy-api.herokuapp.com/pall', predictions)
     .then(res => {
       const predictive = JSON.parse(res.data.result);
       console.log(predictive);
